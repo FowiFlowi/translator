@@ -1,0 +1,5 @@
+{
+  "spaces": [32, 8, 9, 10, 13],
+  "reserved": ["PROGRAM", "BEGIN", "END", "ENDIF", "WHILE", "DO", "ENDWHILE", "IF", "THEN", "ELSE"],
+  "delimeters": [">", "<", "=", ";", "."]
+}
