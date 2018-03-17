@@ -35,7 +35,9 @@ Grammar
 Produces tokens and checks for the lexical errors.
 
 Input
+
 ![input](https://i.imgur.com/qtDvj3c.png)
 
 Output
+
 ![output](https://i.imgur.com/DraxFZI.png)
