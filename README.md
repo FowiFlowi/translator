@@ -33,6 +33,9 @@ Grammar
 
 ## lexer
 Produces tokens and checks for the lexical errors.
+Automaton graph
+
+![graph](https://i.imgur.com/tTFYjpw.png)
 
 Input
 
