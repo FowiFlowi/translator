@@ -1,10 +1,11 @@
+import json
+import os
+
 mdm_token = ''
 idn_token = ''
 num_token = ''
 
-import json
-
-with open('dictionary.json', 'r') as f:
+with open(os.path.dirname(os.path.realpath(__file__)) + '/dictionary.json', 'r') as f:
   dic = json.load(f)
 
 def process_dm(c):

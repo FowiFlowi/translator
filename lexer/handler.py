@@ -1,4 +1,5 @@
 import json
+import os
 
 from process_state import process_num, process_idn, process_dm, process_mdm
 
@@ -12,7 +13,7 @@ class bcolors:
   BOLD = '\033[1m'
   UNDERLINE = '\033[4m'
 
-with open('dictionary.json', 'r') as f:
+with open(os.path.dirname(os.path.realpath(__file__)) + '/dictionary.json', 'r') as f:
   dic = json.load(f)
 
 currPos = 1
@@ -25,11 +26,11 @@ idns = []
 consts = []
 
 def process(c):
-  ac = None if not c else ord(c) # char in ascii
-
   global currPos
   global currLine
   global state
+  
+  ac = None if not c else ord(c) # char in ascii
 
   if state == 'WS' and ac not in dic['spaces']:
     state = 'S'
@@ -91,11 +92,6 @@ def process(c):
   # handle start state
   if state == 'S':
     if not c:
-      # print delimeters
-      # print m_delimeters
-      # print tokens
-      # print idns
-      # print consts
       return {
         'consts': consts,
         'idns': idns,
@@ -107,7 +103,9 @@ def process(c):
     elif c in dic['delimeters']:
       result = process_dm(c)
       if result != None:
+        currPos += 1
         processToken(result, 'DM')
+        currPos -= 1
         state = 'S'
       else:
         state = 'MDM'
@@ -152,7 +150,7 @@ def processToken(token, type):
     code = putToken(delimeters, token)
   elif type == 'MDM':
     code = putToken(m_delimeters, token, 300)
-  
+
   tokens.append({ 'name': token, 'line': currLine, 'pos': currPos - len(token), 'code': code })
 
 

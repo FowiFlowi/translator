@@ -30,6 +30,7 @@ Grammar
 
 ## Stages
 - [Lexical analyzer](#lexer)
+- [Syntax analyzer](#syntaxer)
 
 ## lexer
 Produces tokens and checks for the lexical errors.
@@ -38,10 +39,28 @@ Automaton graph
 
 ![graph](https://i.imgur.com/tTFYjpw.png)
 
-Input
+Input (a source program code):
+```
+PROGRAM kek;
+BEGIN
+  WHILE 10 < 20 DO
+    IF 5  > 10 THEN
+    ELSE
+    ENDIF;
+  ENDWHILE;
+END.
+```
 
-![input](https://i.imgur.com/qtDvj3c.png)
+Output:
 
-Output
+![output](https://i.imgur.com/R8PiLL4.png)
 
-![output](https://i.imgur.com/DraxFZI.png)
+
+## syntaxer
+Produces AST and checks for the syntax errors.
+
+Input is a lexer output (a list of tokens)
+
+Output:
+
+![output](https://i.imgur.com/dAzsMc6.png)
