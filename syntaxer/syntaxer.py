@@ -3,7 +3,7 @@ import sys
 # sys.path.append('../lexer')
 
 # from lexer import lexer
-from nonterminals import program
+from flow import program
 
 def syntaxer(tokens):
   return program(tokens)

@@ -1,4 +1,5 @@
 from tree import Node
+from utils import errorHandler
 
 comparisons = ['<=', '=', '<>', '>=', '>', '<']
 
@@ -6,32 +7,17 @@ root = Node({'name': 'signal-program'})
 currNode = root
 currTokenIndx = 0
 
-class bcolors:
-  FAIL = '\033[91m'
-  ENDC = '\033[0m'
-  BOLD = '\033[1m'
-
 class SyntaxerError(Exception):
   def __init__(self, value, expected = None):
     self.value = value
     self.expected = expected
 
-def errorHandler(e):
-  if e.expected == None:
-    print '{}ERROR:{} {}'.format(bcolors.FAIL, bcolors.ENDC, e.value)
-  else:
-    token = e.value
-    print ('{}ERROR:{} Unexpected token \'{}{}{}\' on position {}{}, {}{}. Expected \'{}{}{}\''
-      .format(bcolors.FAIL, bcolors.ENDC, bcolors.BOLD, token['name'], bcolors.ENDC,
-        bcolors.BOLD, token['line'], token['pos'], bcolors.ENDC, bcolors.BOLD, e.expected, bcolors.ENDC))
-  return root
-
 def nonTerminal(nonTerminalFunc):
   def wrapper(inputTokens = None):
+    global currNode
     if inputTokens:
       global tokens
       tokens = inputTokens
-    global currNode
     parentNode = currNode
     addNode(nonTerminalFunc.__name__)
     result = nonTerminalFunc()
@@ -51,25 +37,26 @@ def terminal(expected, raiseError = True, tokenField = 'name', expectedMsg = Non
   currTokenIndx += 1
 
   value = token[tokenField]
+  claim = False
+  errorMsg = 'valid'
   if isinstance(expected, list):
-    claim = expected if callable(expected) else value in expected
-    if not claim and raiseError:
-      raise SyntaxerError(token, 'one of them: ' + ', '.join(expectedMsg if expectedMsg else expected))
-    else:
-      return claim
+    claim = value in expected
+    errorMsg = 'one of them: '+', '.join(expected)
+  elif callable(expected):
+    claim = expected(value)
+    errorMsg = expectedMsg
   else:
-    claim = expected if callable(expected) else value == expected
-    if not claim and raiseError:
-      raise SyntaxerError(token, expectedMsg if expectedMsg else expected)
-    else:
-      return claim
+    claim = value == expected
+    errorMsg = expected
 
-def rollback(node):
+  if not claim and raiseError:
+    raise SyntaxerError(token, errorMsg)
+  return claim
+
+def rollback():
   global currTokenIndx
-  global currNode
-  currTokenIndx = node.value['indx']
-  node.children = []
-  currNode = node
+  currTokenIndx = currNode.value['indx']
+  currNode.children = []
 
 def addNode(name, code = None):
   global currNode
@@ -95,7 +82,7 @@ def program():
       raise SyntaxerError('Unexpected extra code')
     return root
   except SyntaxerError as e:
-    return errorHandler(e)
+    return errorHandler(e, root)
 
 @nonTerminal
 def block():
@@ -106,7 +93,7 @@ def block():
 @nonTerminal
 def statementsList():
   if not statement() or not statementsList():
-    rollback(currNode)
+    rollback()
     return addNode('<empty>')
   return True
   
@@ -116,8 +103,8 @@ def statement():
     terminal('ENDIF')
     return terminal(';')
 
-  rollback(currNode)
-  if terminal('WHILE', False) == False:
+  rollback()
+  if not terminal('WHILE', False):
     return False
 
   conditionalExpression()
@@ -132,7 +119,7 @@ def conditionStatement():
 
 @nonTerminal
 def incompleteConditionStatement():
-  if terminal('IF', False) == False:
+  if not terminal('IF', False):
     return False
 
   conditionalExpression()
@@ -141,8 +128,8 @@ def incompleteConditionStatement():
 
 @nonTerminal
 def alternativePart():
-  if terminal('ELSE', False) == False:
-    rollback(currNode)
+  if not terminal('ELSE', False):
+    rollback()
     return addNode('<empty>')
   return statementsList()
 
@@ -160,4 +147,4 @@ def expression():
 
 @nonTerminal
 def procedureIdentifier():
-  return terminal(lambda code: code >= 400 and code < 500, True, 'code', 'identifier')
+  return terminal(lambda code: code >= 400 and code < 500, True, 'code', 'procedure identifier')
