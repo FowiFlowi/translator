@@ -1,0 +1,8 @@
+PROGRAM kek;
+BEGIN
+  WHILE 10 < 20 DO
+    IF 5  > 10 THEN
+    ELSE
+    ENDIF;
+  ENDWHILE;
+END.

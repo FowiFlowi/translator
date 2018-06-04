@@ -88,7 +88,6 @@ def process(c):
     else:
       state = 'COM'
 
-
   # handle start state
   if state == 'S':
     if not c:
@@ -122,14 +121,9 @@ def process(c):
     else:
       outError('Illegal symbol', c)
 
-
-  # if ac in dic['spaces']:
-    # out('<s>', ac)
   if ac == 10 or ac == 13:
     currPos = 0
     currLine += 1
-  # else:
-  #   out(c, ac)
 
   currPos += 1
   return None
@@ -166,9 +160,6 @@ def putToken(table, token, indx = None):
     table.append({ 'name': token, 'code': code })
 
   return code
-
-def out(c, ascii):
-  print currLine, currPos, c, ascii
 
 def outError(msg, c):
   print '{}ERROR:{} {} \'{}\' on position {}{}, {}{}'.format(bcolors.FAIL, bcolors.ENDC, msg, c, bcolors.BOLD, currLine, currPos, bcolors.ENDC)

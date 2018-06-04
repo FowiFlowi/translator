@@ -1,6 +1,13 @@
 # Translator
 Translator from university course of program engineering.
+
 Created on python.
+
+## How to start
+It will watch for changes in `.py` files and reload translator. There you can configure output
+```bash
+./wtch.sh
+```
 
 Grammar
 ```text
@@ -31,6 +38,7 @@ Grammar
 ## Stages
 - [Lexical analyzer](#lexer)
 - [Syntax analyzer](#syntaxer)
+- [Semantic analyzer](#semantyxer)
 
 ## lexer
 Produces tokens and checks for the lexical errors.
@@ -64,3 +72,13 @@ Input is a lexer output (a list of tokens)
 Output:
 
 ![output](https://i.imgur.com/dAzsMc6.png)
+
+
+## semantyxer
+Produces asm code and checks for the semantic errors
+
+Input is a AST
+
+Output:
+
+![output](https://i.imgur.com/Z0B53ue.png)
